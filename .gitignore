@@ -1,0 +1,57 @@
+# Environment files
+.env
+.env.backup
+.env.production
+
+# Composer dependencies
+/vendor/
+composer.lock
+
+# IDE specific files
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.phpstorm.meta.php
+_ide_helper.php
+
+# Cache and logs
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/app/public/*
+*.log
+
+# Temporary files
+*.swp
+*.swo
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Build files
+/public/build/
+/public/hot
+/public/storage
+/public/uploads/*
+
+# Testing
+.phpunit.result.cache
+/coverage/
+
+# Application specific
+/node_modules/
+/public/assets/vendor/
+/public/mix-manifest.json
+
+# Keep directories
+!.gitkeep
+!storage/logs/.gitkeep
+!storage/framework/cache/.gitkeep
+!storage/framework/sessions/.gitkeep
+!storage/framework/views/.gitkeep
+!storage/app/public/.gitkeep
+!public/uploads/.gitkeep

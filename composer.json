@@ -1,0 +1,20 @@
+{
+    "name": "dzwork/framework",
+    "description": "DzWork PHP Framework",
+    "type": "project",
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "DzWork\\": "src/",
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "DzWork Framework"
+        }
+    ],
+    "minimum-stability": "dev"
+}
