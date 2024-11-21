@@ -45,9 +45,7 @@ dzwork/
 ├── public/                # Document root
 │   └── index.php         # Front controller
 ├── src/                   # Kode inti framework
-│   ├── Core/             # Komponen inti
-│   ├── Database/         # Layer database
-│   └── Http/             # Request/Response handlers
+│   └── Core/             # Komponen inti framework
 └── vendor/                # Dependensi composer
 ```
 
@@ -64,9 +62,14 @@ $router->get('/', 'HomeController@index');
 // Route dengan parameter
 $router->get('/users/{id}', 'UserController@show');
 
-// Route grup
-$router->group(['prefix' => 'admin', 'middleware' => ['auth']], function($router) {
+// Route grup dengan prefix
+$router->group(['prefix' => 'admin'], function($router) {
     $router->get('/dashboard', 'AdminController@dashboard');
+});
+
+// Route grup untuk API
+$router->api('1', function($router) {
+    $router->get('/users', 'Api\UserController@index');
 });
 ```
 
@@ -119,24 +122,38 @@ Buat view di `app/Views`:
 <?php $this->endSection() ?>
 ```
 
-### 5. Middleware
+## Fitur Framework
 
-Buat middleware di `app/Middleware`:
+1. **Routing yang Fleksibel**
+   - Route dasar (GET, POST, PUT, DELETE)
+   - Route dengan parameter
+   - Route grouping
 
-```php
-namespace App\Middleware;
+2. **MVC Architecture**
+   - Model dengan basic CRUD operations
+   - Controller dengan response handling
+   - View dengan layout system
 
-class AuthMiddleware
-{
-    public function handle($request, $next)
-    {
-        if (!is_logged_in()) {
-            return redirect('/login');
-        }
-        return $next($request);
-    }
-}
-```
+3. **Database Integration**
+   - PDO-based database connection
+   - Basic query builder
+   - Model fillable protection
+
+4. **View System**
+   - Layout inheritance
+   - Section management
+   - Data passing
+   - Basic helper functions
+
+5. **Error Handling**
+   - Development/Production mode
+   - Error logging
+   - Custom error pages
+
+6. **Localization**
+   - Multi-language support
+   - Timezone setting
+   - Basic translation helper
 
 ## Konfigurasi Database
 
@@ -147,14 +164,25 @@ class AuthMiddleware
 cp .env.example .env
 ```
 
-2. Sesuaikan konfigurasi database di file `.env`:
+2. Sesuaikan konfigurasi di file `.env`:
 ```env
-DB_CONNECTION=mysql
+# Application Settings
+APP_NAME=DzWork
+APP_ENV=development
+APP_DEBUG=true
+
+# Database Configuration
 DB_HOST=127.0.0.1
-DB_PORT=3306
 DB_DATABASE=dzwork
 DB_USERNAME=root
 DB_PASSWORD=
+
+# Logging
+LOG_PATH=storage/logs/app.log
+
+# Timezone and Locale
+APP_TIMEZONE=Asia/Jakarta
+APP_LOCALE=id
 ```
 
 ### 2. Penggunaan Database
@@ -277,20 +305,6 @@ $updated = (new User())->update($id, [
 $deleted = (new User())->delete($id);
 ```
 
-### Keterbatasan Current Version
-
-Beberapa fitur yang belum tersedia di versi ini:
-1. Query Builder kompleks (join, having, dll)
-2. Relationships antar model
-3. Database migrations
-4. Transactions
-5. Model events/observers
-6. Soft deletes
-7. Query scopes
-8. Eager loading
-
-Fitur-fitur tersebut akan ditambahkan di versi mendatang.
-
 ## Command Line Interface (CLI)
 
 DzWork menyediakan command line interface untuk mempermudah development. Berikut adalah daftar perintah yang tersedia:
@@ -301,7 +315,7 @@ php dz make:controller NamaController
 ```
 Contoh:
 ```bash
-php dz make:controller UserController
+php dz make:controller HomeController
 ```
 
 ### Membuat Model Baru
@@ -313,13 +327,13 @@ Contoh:
 php dz make:model User
 ```
 
-### Membuat Middleware Baru
+### Membuat View Baru
 ```bash
-php dz make:middleware NamaMiddleware
+php dz make:view nama_view
 ```
 Contoh:
 ```bash
-php dz make:middleware AuthMiddleware
+php dz make:view home
 ```
 
 ### Menjalankan Development Server
@@ -328,118 +342,25 @@ php dz serve
 ```
 Secara default server akan berjalan di `http://localhost:8000`
 
-### Cache Management
-```bash
-# Membersihkan cache view
-php dz cache:clear
-
-# Membersihkan cache route
-php dz route:clear
-
-# Membersihkan semua cache
-php dz clear:all
-```
-
-### Maintenance Mode
-```bash
-# Mengaktifkan maintenance mode
-php dz down
-
-# Menonaktifkan maintenance mode
-php dz up
-```
-
-### Optimasi
-```bash
-# Mengoptimasi autoload
-php dz optimize:autoload
-
-# Mengoptimasi route
-php dz optimize:route
-
-# Mengoptimasi semua
-php dz optimize
-```
-
-### Keamanan
-```bash
-# Generate application key baru
-php dz key:generate
-
-# Generate encryption key
-php dz key:encrypt
-```
-
-### Informasi Framework
-```bash
-# Menampilkan versi framework
-php dz --version
-
-# Menampilkan daftar perintah yang tersedia
-php dz list
-
-# Menampilkan bantuan untuk perintah tertentu
-php dz help nama:perintah
-```
-
-### Environment
-```bash
-# Menampilkan environment saat ini
-php dz env
-
-# Mengatur environment
-php dz env:set NAMA_VARIABLE=nilai
-```
-
 > **Catatan**: Beberapa perintah mungkin memerlukan hak akses root/administrator tergantung pada konfigurasi sistem Anda.
-
-## Fitur
-
-✅ Tersedia:
-- Arsitektur MVC
-- Sistem routing sederhana
-- View template dengan layout
-- Basic database abstraction
-- Error handling
-- Middleware support
-- Localization (ID/EN)
-
-⚠️ Keterbatasan:
-- Belum ada sistem caching bawaan
-- Session handling masih dasar
-- Belum ada migration system yang lengkap
-- Belum ada built-in authentication
-- Testing framework belum tersedia
-- Belum ada form validation yang komprehensif
 
 ## Best Practices
 
 1. Selalu gunakan prepared statements untuk query database
 2. Implementasikan validasi input secara manual
 3. Enkripsi data sensitif sebelum menyimpan ke database
-4. Gunakan HTTPS di production
-5. Aktifkan error reporting hanya di development
+4. Gunakan layout untuk konsistensi tampilan
+5. Pisahkan logika bisnis ke dalam model
+6. Jaga controller tetap ramping (thin controllers)
 
-## Rekomendasi Penggunaan
+## Use Cases
 
-### Cocok untuk:
+DzWork cocok untuk:
 - Aplikasi web skala kecil-menengah
 - Prototyping dan MVP
 - Pembelajaran konsep MVC
 - Proyek dengan kebutuhan minimalis
 
-### Perlu pertimbangan untuk:
-- Aplikasi enterprise
-- Sistem dengan kebutuhan keamanan tinggi
-- Aplikasi dengan traffic/load tinggi
-- Sistem yang membutuhkan fitur framework advanced
-
-## Kontribusi
-
-Silakan berkontribusi dengan membuat pull request. Untuk perubahan besar, harap buka issue terlebih dahulu untuk mendiskusikan perubahan yang diinginkan.
-
 ## Lisensi
 
-Framework ini dilisensikan di bawah [DreamZ License](LICENSE). Penggunaan untuk tujuan komersial memerlukan izin tertulis dari DreamZ Development. Untuk informasi lebih lanjut tentang lisensi komersial, silakan hubungi:
-
-- Email: dreamzinc.id@gmail.com
+Framework ini dilisensikan di bawah DreamZ License. Lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
