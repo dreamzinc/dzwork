@@ -15,7 +15,7 @@ DzWork adalah framework PHP minimalis yang dirancang untuk membangun aplikasi we
 
 1. Clone repositori
 ```bash
-git clone https://github.com/yourusername/dzwork.git
+git clone https://github.com/dreamzinc/dzwork.git
 ```
 
 2. Install dependensi dengan Composer
